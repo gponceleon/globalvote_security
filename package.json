@@ -1,0 +1,24 @@
+{
+  "name": "globalvote_security",
+  "version": "1.0.0",
+  "description": "servicios para la administracion de la seguridad",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.15.3",
+    "pg": "^6.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gponceleon/globalvote_security.git"
+  },
+  "author": "gponceleon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gponceleon/globalvote_security/issues"
+  },
+  "homepage": "https://github.com/gponceleon/globalvote_security#readme"
+}
