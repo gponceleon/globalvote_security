@@ -2,7 +2,7 @@
     "host":"localhost",
     "port":5432,
     "user":"globalvote",
-    "pwd":"gl0b4lv0t3",
+    "password":"gl0b4lv0t3",
+    "database":"globalvote",
     "schema":"globalvote"
-
 }
