@@ -13,18 +13,31 @@ module.exports = function(models,app,Sequelize){
 
     app.route('/userRole')
     .post(function(req,res){
-        UserRole.create({
-            users_id:req.body.users_id,
-            roles_id: req.body.roles_id,
-            granted_date: Date.now()
-        })
-        .then(function(result){
-            res.send('Success');
-        })
-        .catch(function(err){
-            console.error('error running query', err);
-            res.send('500, Error granting rol to user');
-        })
+    try { 
+        var success=0;
+            for(var i in req.body){
+                UserRole.create({
+                    users_id:req.body[i].users_id,
+                    roles_id:req.body[i].roles_id,
+                    granted_date: Date.now()
+                })
+                .then(function(result){
+                    if(isEmpty(result)){
+                        res.send('500, Error granting rol to user');
+                    }else{
+                        res.send('Success');
+                    }
+                })
+                .catch(Sequelize.ValidationError,function(err){
+                    console.error('error running query', err);
+                    res.send('500, Error granting rol to user');
+                });
+            
+            } 
+        } catch (error) {
+          res.send('500, Error associating the privilege with the role');
+          console.error('error running query', error);
+        }
     })
     .get(function(req,res){
         UserRole.findAll({
