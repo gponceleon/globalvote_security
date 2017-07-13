@@ -5,37 +5,44 @@ function isEmpty(obj){
     return !Object.keys(obj).length;
 };
 
-
-
-module.exports = function(models,app){
+module.exports = function(models,app,passport){
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended:true}));
 
     const User = models.users;
 
-    app.post('/login',function(req,res){
-        if(isEmpty(req.body)){
-            res.send('Give username and password');
-        }else{  
-            User.findOne({
-                where:{
-                    username:req.body.username,
-                },
-                attributes: ['password']
-            }).then(function(user){
-                user.toJSON();
-                console.log(user.dataValues.password);
-                if(isEmpty(user)){
-                    res.send('User does not exists');
-                }else{
-                    if(user.dataValues.password===sha1(req.body.password)){
-                        res.send('Login Success'); 
-                    }else{
-                        res.send('Password invalid');
-                    }
-                }
-
-            })
-        }
+    app.get('/', function(req, res) {
+        res.render('index.ejs'); 
     });
+
+    app.get('/login', function(req, res) {
+
+        res.render('login.ejs', { message: req.flash('loginMessage') }); 
+    });
+
+    app.get('/signup',function(req,res){
+        res.render('signup.ejs');
+    });
+
+    app.get('/logout', function(req, res) {
+        req.logout();
+        res.redirect('/');
+    });
+
+    app.get('/welcome', function(req, res) {
+        res.render('welcome.ejs');
+    });
+
+    function isLoggedIn(req, res, next) {
+        if (req.isAuthenticated())
+            return next();
+
+        res.redirect('/');
+    }
+
+    app.post('/login',passport.authenticate('local-login',{
+        successRedirect:'/welcome',
+        failureRedirect: '/login',
+        failureFlash:true
+    }));
 }

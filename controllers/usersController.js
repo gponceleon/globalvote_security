@@ -16,7 +16,8 @@ module.exports = function(models,app){
                locked:req.body.locked
             }).then(
             function(result){
-                res.send('Success')}
+                res.send(success);
+            }
             ).catch(function(err){
                 console.error('error running query', err);
                 res.send('500, Error creating usere');

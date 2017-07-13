@@ -11,8 +11,10 @@ var loginController = require('./controllers/loginController');
 
 var Sequelize = require('sequelize');
 var config = require('./config/DBConfig.json');
+var cookieParser = require('cookie-parser');
 var session = require('express-session');
-
+var passport = require('passport');
+var flash    = require('connect-flash');
 
 //connect to sequelize 
 var sequelize=new Sequelize('globalvote', 'globalvote', 'gl0b4lv0t3',{
@@ -23,25 +25,20 @@ var sequelize=new Sequelize('globalvote', 'globalvote', 'gl0b4lv0t3',{
 
 var models= require('./models/index.js')(sequelize);
 
+var auth = require('./config/passport')(passport,models.users);
 
 var port = process.env.PORT || 3000;
+
 app.use('/assets',express.static(__dirname+'/public'));
-app.use(session({ 
-        secret: 'gl0b4lv0t34pp',
-        saveUninitialized: false,
-        resave: true
-    }));
+app.use(session({ secret: 'globalvote',resave: true, saveUninitialized:true}));
+app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 
-app.use(function(req,res,next){
-    var err=req.session.error;
-    var msg=req.session.success;
-    delete req.session.error;
-    delete req.session.success;
-    res.locals.message = '';
-    next();
-})
+app.set('view engine', 'ejs');
 
-loginController(models,app);
+loginController(models,app,passport);
 usersController(models,app);
 rolesController(models,app);
 userRoleController(models,app,Sequelize);
