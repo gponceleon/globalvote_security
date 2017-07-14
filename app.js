@@ -35,7 +35,6 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-
 app.set('view engine', 'ejs');
 
 loginController(models,app,passport);
