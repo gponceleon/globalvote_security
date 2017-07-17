@@ -8,6 +8,7 @@ var userRoleController = require('./controllers/userRoleController');
 var privilegesController = require('./controllers/privilegesController');
 var privilegesRolesController = require('./controllers/privilegesRolesController');
 var loginController = require('./controllers/loginController');
+var genericController = require('./controllers/genericController');
 
 var Sequelize = require('sequelize');
 var config = require('./config/DBConfig.json');
@@ -38,10 +39,17 @@ app.use(flash());
 app.set('view engine', 'ejs');
 
 loginController(models,app,passport);
+genericController(models,app)
 usersController(models,app);
 rolesController(models,app);
 userRoleController(models,app,Sequelize);
 privilegesController(models,app,Sequelize);
 privilegesRolesController(models,app,Sequelize);
 
-app.listen(port);
+app.listen(port,function(err){
+    if(err){
+        console.log('Something happend with the server');
+        throw err;
+    }
+    console.log('Server is alive');
+});

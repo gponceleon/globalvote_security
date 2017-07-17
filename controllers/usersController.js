@@ -3,7 +3,6 @@ var sha1 = require('sha1');
 var fs = require('fs');
 var path = require('path');
 const fileUpload = require('express-fileupload');
-var ProcessFile = require('../config/processFile');
 
 function isEmpty(obj){
     return !Object.keys(obj).length;
@@ -14,7 +13,9 @@ module.exports = function(models,app){
     app.use(bodyParser.urlencoded({extended:true}));
     app.use(fileUpload());
     const users = models.users;
-
+function isEmpty(obj){
+    return !Object.keys(obj).length;
+};
     app.route("/users")
         .post(function(req,res){
            users.create({username:req.body.username,
@@ -92,26 +93,35 @@ module.exports = function(models,app){
             });
         });
 
-    app.post('/uploadUsers',function(req,res){
-        
+    app.post("/uploadUsers",function(req,res){
+        var serverPath='/home/gponceleon/Documentos/GlobalVOte/globalVote-security/globalvote_security/files/'
         if(!req.files){
             res.status(400).send('No files were upload');
         }else{
-            let file = req.files.sampleFile;
+            let file = req.files.sampleFile; 
             file.mv('/home/gponceleon/Documentos/GlobalVOte/globalVote-security/globalvote_security/files/'+req.files.sampleFile.name,function(err){
                 if(err){
                     res.status(500).send(err);
                 }else{
+                    rf = require('../promises/processFile').readFilePromise;
+                    var path=serverPath+'users.txt';
+                    rf(path).then(data=>{
+                        if(!isEmpty(data)){
+                            var wf=require('../promises/processFile').writeUsersInDB;
+                            wf(models,data).then(rs=>{
+                                console.log("File proccessed");
+                                res.send('Sucess');
+                            })
+                            .catch(error=>{
+                                console.error(error);
+                                res.send('Something Happend!');
+                            });
+                        }
+                    }).catch(error=>{
+                        console.error(error);
+                        res.send('Something Happend!');
+                    });
 
-                    var pf = new ProcessFile('users');
-                    var response= pf.users(models,res);
-                    console.log(pf.response);
-                    if(response==0){
-                        res.status(500).send('Something happend');
-                    }/*else{
-                        res.status(500).send('Something happend');
-                    }*/
-                    
                 }
             });
         }
