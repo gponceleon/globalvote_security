@@ -79,6 +79,35 @@ class ProcessFile{
             }           
         });
     }
-};
+
+    writePrivileges(models,data){
+        return new Promise(function(resolve,reject){
+            const Privileges = models.appPrivileges;
+            for(var i=0;i<data.length;i++){
+                Privileges.create({
+                    privileges_name:data[i].data0
+                }).then(function(res){
+                    console.log('Privilege Saved');
+                    resolve(res);
+                }).catch(function(error){
+                    console.log('Privilege has not been saved');
+                    reject(error);
+                });
+            }
+        });
+    }
+
+      moveFile(file,filePath){
+        return new Promise(function(resolve,reject){
+             file.mv(filePath,function(err){
+                if(err){
+                    reject(error);
+                }else{
+                    resolve(1);
+                }
+            });
+        });
+    }
+}
 
 module.exports = ProcessFile;
