@@ -23,11 +23,11 @@ function isEmpty(obj){
                locked:req.body.locked
             }).then(
             function(result){
-                res.send(success);
+                res.status(200).send('Success!');
             }
             ).catch(function(err){
                 console.error('error running query', err);
-                res.send('500, Error creating usere');
+                res.status(500).send('Error creating users');
             });
         
         })
@@ -35,14 +35,14 @@ function isEmpty(obj){
             users.findAll()
             .then(function(users){
                  if(isEmpty(users)){
-                    res.send('500,users do not exists');
+                    res.status(500).send('Users do not exists');
                 }else{
-                    res.send(users);
+                    res.status(200).send(users);
                 }
             })
             .catch(function(err){
                 console.error('error running query', err);
-                res.send('500, error running query');
+                res.status(500).send('Error running query');
             });
         });
 
@@ -54,13 +54,13 @@ function isEmpty(obj){
                 }
             }).then(function(user){
                 if(isEmpty(user)){
-                    res.send('500,User does not exists');
+                    res.status(500).send('User does not exists');
                 }else{
-                    res.send(user);
+                    res.status(200).send(user);
                 }
             }).catch(function(err){
                 console.error('error running query', err);
-                res.send('500,error running query');
+                res.status(500).send('Error running query');
             });
 
         })
@@ -70,10 +70,10 @@ function isEmpty(obj){
                     username:req.params.username
                 }
             }).then(function(result){
-                 res.send('Success');
+                 res.status(200).send('Success');
             }).catch(function(err){
                 console.error('error running query', err);
-                res.send('500,error running query');
+                res.status(500).send('Error running query');
             });
         })
         .patch(function(req,res){
@@ -85,17 +85,17 @@ function isEmpty(obj){
                 }
             })
             .then(function(result){
-                res.send('Success');
+                res.status(200).send('Success');
             })
             .catch(function(err){
                 console.error('error running query', err);
-                res.send('500,error running query');
+                res.status(500).send('Error running query');
             });
         });
 
     app.post("/uploadUsers",function(req,res){
         var serverPath='/home/gponceleon/Documentos/GlobalVOte/globalVote-security/globalvote_security/files/'
-        if(!req.files){
+        if(isEmpty(req.files)){
             res.status(400).send('No files were upload');
         }else{
             let file = req.files.sampleFile; 
@@ -110,16 +110,16 @@ function isEmpty(obj){
                             var wf=require('../promises/processFile').writeUsersInDB;
                             wf(models,data).then(rs=>{
                                 console.log("File proccessed");
-                                res.send('Sucess');
+                                res.status(200).send('Sucess!');
                             })
                             .catch(error=>{
                                 console.error(error);
-                                res.send('Something Happend!');
+                                res.status(500).send('Something Happend!');
                             });
                         }
                     }).catch(error=>{
                         console.error(error);
-                        res.send('Something Happend!');
+                        res.status(500).send('Something Happend!');
                     });
 
                 }

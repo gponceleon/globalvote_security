@@ -9,6 +9,7 @@ var privilegesController = require('./controllers/privilegesController');
 var privilegesRolesController = require('./controllers/privilegesRolesController');
 var loginController = require('./controllers/loginController');
 var genericController = require('./controllers/genericController');
+var queriesController= require('./controllers/queriesController');
 
 var Sequelize = require('sequelize');
 var config = require('./config/DBConfig.json');
@@ -45,6 +46,7 @@ rolesController(models,app);
 userRoleController(models,app,Sequelize);
 privilegesController(models,app,Sequelize);
 privilegesRolesController(models,app,Sequelize);
+queriesController(sequelize,app);
 
 app.listen(port,function(err){
     if(err){

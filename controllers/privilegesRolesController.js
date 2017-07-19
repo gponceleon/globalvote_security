@@ -1,4 +1,5 @@
 var bodyParser = require('body-parser');
+var InsertData = require('../promises/insertData');
 
 function isEmpty(obj){
     return !Object.keys(obj).length;
@@ -14,28 +15,18 @@ module.exports = function(models,app,Sequelize){
 
     app.route('/rolesPrivileges')
     .post(function(req,res){
-     try { 
-        for(var i in req.body){
-            rolesPrivileges.create({
-                roles_id:req.body[i].roles_id,
-                app_privileges_id:req.body[i].app_privileges_id
-                })
-                .then(function(result){
-                    if(isEmpty(result)){
-                        res.send('Error with the associating the provilege with the role');
-                    }else{
-                        res.send('Success');
-                    }
-                })
-                .catch(Sequelize.ValidationError,function(err){
-                     console.error('error running query', err);
-                    res.send('500, Error associating the privilege with the role');
-                });
-            } 
-        } catch (error) {
-          res.send('500, Error associating the privilege with the role');
-          console.error('error running query', error);
-        }
+
+        insert = new InsertData();
+        insert.insertPrivilegeRole(models,req.body).then(function(rs){
+            if(!isEmpty(rs)){
+                res.status(200).send('Success!');
+            }else{
+                res.status(500).send('Error associating the privilege with the role');
+            }
+        }).catch(error=>{
+            console.error(error);
+            res.status(500).send('Error associating the privilege with the role');
+        });
 
     })
     .get(function(req,res){
@@ -61,16 +52,16 @@ module.exports = function(models,app,Sequelize){
                         aux.privileges_name=rs[i].appPrivilege.privileges_name;
                         result[i]=aux;   
                     }
-                     res.send(result);
+                     res.status(200).send(result);
                 }
             })
             .catch(Sequelize.ValidationError,function(err){
                 console.error('error running query', err);
-                res.send('500, Error listing the privilege with the role');
+                res.status(500).send('Error listing the privilege with the role');
             });
         
         }catch(error){
-            res.send('500, Error listing the privileges with the roles');
+            res.status(500).send('Error listing the privileges with the roles');
         }
     });
     app.route('/rolesPrivileges/:rolename')
@@ -90,7 +81,7 @@ module.exports = function(models,app,Sequelize){
             })
             .then(function(rs){
                 if(isEmpty(rs)){
-                    rs.send('Role did not have privileges');
+                    rs.status(500).send('Role did not have privileges');
                 }else{
                     var result=[];
                     for(var i in rs){
@@ -100,15 +91,15 @@ module.exports = function(models,app,Sequelize){
                         result[i]=aux;
                     }
                 }
-                res.send(result);
+                res.status(200).send(result);
             })
             .catch(Sequelize.ValidationError,function(err){
                 console.error('error running query', err);
-                res.send('500, Error listing the privilege with the role');
+                res.status(500).send('Error listing the privilege with the role');
             });
         }catch(error){
             console.error('error running query', error);
-            res.send('500, Error listing the privilege with the role');
+            res.status(500).send('Error listing the privilege with the role');
         }
     });
     app.route('/rolesPrivileges/:roles_id/:privilege_id')
@@ -121,15 +112,15 @@ module.exports = function(models,app,Sequelize){
                 }
             })
             .then(function(result){
-                res.send('Success');
+                res.status(200).send('Success!');
             })
             .catch(Sequelize.ValidationError,function(err){
                 console.error('error running query', err);
-                res.send('500, Error deleting the privilege with the role');
+                res.status(500).send('Error deleting the privilege with the role');
             });
         }catch(error){
             console.error('error running query', error);
-            res.send('500, Error deleting the privilege with the role');
+            res.status(500).send('Error deleting the privilege with the role');
         }
     });
 }

@@ -1,4 +1,5 @@
 var bodyParser = require('body-parser');
+var InsertData = require('../promises/insertData');
 
 function isEmpty(obj){
     return !Object.keys(obj).length;
@@ -13,31 +14,18 @@ module.exports = function(models,app,Sequelize){
 
     app.route('/userRole')
     .post(function(req,res){
-    try { 
-        var success=0;
-            for(var i in req.body){
-                UserRole.create({
-                    users_id:req.body[i].users_id,
-                    roles_id:req.body[i].roles_id,
-                    granted_date: Date.now()
-                })
-                .then(function(result){
-                    if(isEmpty(result)){
-                        res.send('500, Error granting rol to user');
-                    }else{
-                        res.send('Success');
-                    }
-                })
-                .catch(Sequelize.ValidationError,function(err){
-                    console.error('error running query', err);
-                    res.send('500, Error granting rol to user');
-                });
-            
-            } 
-        } catch (error) {
-          res.send('500, Error associating the privilege with the role');
-          console.error('error running query', error);
-        }
+
+        insert = new InsertData();
+        insert.insertUseRole(models,req.body).then(function(rs){
+            if(!isEmpty(rs)){
+                res.status(200).send('Success!');
+            }else{
+                res.status(500).send('Error associating the user with the role');
+            }
+        }).catch(error=>{
+            console.error(error);
+            res.status(500).send('Error associating the user with the role');
+        });
     })
     .get(function(req,res){
         UserRole.findAll({
@@ -49,7 +37,7 @@ module.exports = function(models,app,Sequelize){
             }]
         }).then(function(rs){
             if(isEmpty(rs)){
-                res.send('No users granted with roles');
+                res.status(500).send('No users granted with roles');
             }else{
                 
                 var result=[];
@@ -62,12 +50,12 @@ module.exports = function(models,app,Sequelize){
                     aux.granted_date=rs[i].granted_date;
                     result[i]=aux;
                 }
-                res.send(result);
+                res.status(200).send(result);
             }
 
         }).catch(function(err){
             console.error('error running query', err);
-            res.send('500, Error in query')
+            res.status(500).send('Error in query')
         });
     });
 
@@ -79,10 +67,10 @@ module.exports = function(models,app,Sequelize){
                     roles_id:req.params.roles_id
                 }
             }).then(function(result){
-                 res.send('Success');
+                 res.status(200).send('Success!');
             }).catch(function(err){
                 console.error('error running query', err);
-                res.send('500,error running query');
+                res.status(500).send('Error running query');
             });
     })
     .get(function(req,res){
@@ -99,7 +87,7 @@ module.exports = function(models,app,Sequelize){
             }]
         }).then(function(rs){
             if(isEmpty(rs)){
-                res.send('User with that privilege does not exist');
+                res.status(500).send('User with that privilege does not exist');
             }else{
                 var result=[];
                 for(var i in rs){
@@ -111,7 +99,7 @@ module.exports = function(models,app,Sequelize){
                     aux.granted_date=rs[i].granted_date;
                     result[i]=aux;
                 }
-                res.send(result);
+                res.status(200).send(result);
             }
         })
     });

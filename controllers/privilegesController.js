@@ -13,25 +13,25 @@ module.exports = function(models,app,Sequelize){
     .post(function(req,res){
         appPrivileges.create({privileges_name:req.body.privileges_name})
         .then(function(result){
-            res.send('Success');
+            res.status(200).send('Success');
         })
         .catch(function(err){
             console.error('error running query', err);
-            res.send('500, Error creating Privilege');
+            res.status(500).send('Error creating Privilege');
         });
     })
     .get(function(req,res){
         appPrivileges.findAll()
         .then(function(result){
             if(isEmpty(result)){
-                res.send('No exists any Privileges');
+                res.status(500).send('No exists any Privileges');
             }else{
-                res.send(result);
+                res.status(200).send(result);
             }
         })
         .catch(function(err){
             console.error('error running query', err);
-            res.send('500, Error listing Privileges');
+            res.status(200).send('Error listing Privileges');
         });
     });
 
@@ -40,9 +40,9 @@ module.exports = function(models,app,Sequelize){
         appPrivileges.findAll({where:{app_privileges_id:req.params.privilege_id}})
         .then(function(result){
             if(isEmpty(result)){
-                res.send('The privileges does not exists');
+                res.status(500).send('The privileges does not exists');
             }else{
-                res.send(result);
+                res.status(200).send(result);
             }
         })
     })
@@ -52,10 +52,10 @@ module.exports = function(models,app,Sequelize){
                 app_privileges_id:req.params.privilege_id
             }
         }).then(function(result){
-            res.send('Success');
+            res.status(200).send('Success!');
         }).catch(function(err){
             console.error('error running query', err);
-            res.send('500, Error deleting Privilege');
+            res.status(500).send('Error deleting Privilege');
         });
     })
     .patch(function(req,res){
@@ -64,11 +64,11 @@ module.exports = function(models,app,Sequelize){
         },{where:{
             app_privileges_id:req.params.privilege_id}
         }).then(function(result){
-            res.send('Success');
+            res.status(200).send('Success!');
         })
         .catch(function(err){
             console.error('error running query', err);
-            res.send('500, Error updating Privilege');
+            res.status(500).send('Error updating Privilege');
         });
     });
     
