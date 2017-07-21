@@ -3,6 +3,7 @@
 var fs = require('fs');
 var util = require('util');
 var sha1 = require('sha1');
+var json2csv = require('json2csv');
 
 class ProcessFile{
     
@@ -107,6 +108,24 @@ class ProcessFile{
                 }
             });
         });
+    }
+
+    writeResult(filePath,dat,myfields){
+        return new Promise(function(resolve,reject){
+            try{
+                var result=json2csv({data:dat,fields:myfields});
+                fs.writeFile(filePath,result,function(err){
+                    if(err){
+                        reject(err);
+                    }else{
+                        resolve(1);
+                    }
+                })
+
+            }catch(err){
+                reject(err);
+            }
+        })
     }
 }
 

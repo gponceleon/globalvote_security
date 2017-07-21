@@ -1,0 +1,5 @@
+"username","rolename","granted_date"
+"aduarte","Developer","""2017-07-18T19:25:21.694Z"""
+"aduarte","IT","""2017-07-18T19:25:21.694Z"""
+"gponceleon","DBA","""2017-07-12T18:47:36.874Z"""
+"gponceleon","Developer","""2017-07-12T18:47:36.874Z"""
