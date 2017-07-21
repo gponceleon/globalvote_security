@@ -1,3 +1,0 @@
-"username","rolename","granted_date"
-"gponceleon","DBA","""2017-07-12T18:47:36.874Z"""
-"gponceleon","Developer","""2017-07-12T18:47:36.874Z"""
