@@ -2,6 +2,7 @@ var bodyParser = require('body-parser');
 var ProcessFile = require('../promises/processFile');
 var serverPath='/home/gponceleon/Documentos/GlobalVOte/globalVote-security/globalvote_security/files/out';
 var pf = new ProcessFile();
+
 function isEmpty(obj){
     return !Object.keys(obj).length;
 };
@@ -18,7 +19,7 @@ module.exports = function(sequelize,app){
             if(!isEmpty(result)){
                 if(req.params.print=='yes'){
                     var myfields = ['username','rolename','granted_date'];
-                    pf.writeResult(serverPath+'/usersRoles..csv',result,myfields).then(data=>{
+                    pf.writeResult(serverPath+'/usersRoles.csv',result,myfields).then(data=>{
                     res.status(200).send(result);
                     }).catch(err=>{
                          res.status(500).send('no exists any users with roles assigned');
@@ -39,7 +40,7 @@ module.exports = function(sequelize,app){
             if(!isEmpty(result)){
                 if(req.params.print=='yes'){
                     var myfields=['rolename','amountprivileges'];
-                    pf.writeResult(serverPath+'/amountPrivileges..csv',result,myfields).then(data=>{
+                    pf.writeResult(serverPath+'/amountPrivileges.csv',result,myfields).then(data=>{
                     res.status(200).send(result);
                     }).catch(err=>{
                          res.status(500).send('no exists any roles with privileges assigned');
@@ -64,7 +65,7 @@ module.exports = function(sequelize,app){
             if(!isEmpty(result)){
                 if(req.params.print=='yes'){
                     var myfields=['username','amountroles'];
-                    pf.writeResult(serverPath+'/amountRoles..csv',result,myfields).then(data=>{
+                    pf.writeResult(serverPath+'/amountRoles.csv',result,myfields).then(data=>{
                         res.status(200).send(result)
                     }).catch(err=>{
                         res.status(500).send('no exists any users with roles assigned');
@@ -85,7 +86,7 @@ module.exports = function(sequelize,app){
             if(!isEmpty(result)){
                 if(req.params.print=='yes'){
                     var myfields = ['username','rolename','granted_date'];
-                    pf.writeResult(serverPath+'/userRoles..csv',result,myfields).then(data=>{
+                    pf.writeResult(serverPath+'/userRoles.csv',result,myfields).then(data=>{
                         res.status(200).send(result)
                     }).catch(err=>{
                         res.status(500).send('no exists any users with roles assigned');
@@ -111,7 +112,7 @@ module.exports = function(sequelize,app){
             if(!isEmpty(result)){
                 if(req.params.print=='yes'){
                     var myfields=['username','amountroles'];
-                    pf.writeResult(serverPath+'/userAmountRoles..csv',result,myfields).then(data=>{
+                    pf.writeResult(serverPath+'/userAmountRoles.csv',result,myfields).then(data=>{
                         res.status(200).send(result)
                     }).catch(err=>{
                         res.status(500).send('no exists any users with roles assigned');
@@ -132,7 +133,7 @@ module.exports = function(sequelize,app){
             if(!isEmpty(result)){
                 if(req.params.print=='yes'){
                         var myfields=['rolename','amountprivileges'];
-                        pf.writeResult(serverPath+'/x..csv',result,myfields).then(data=>{
+                        pf.writeResult(serverPath+'/x.csv',result,myfields).then(data=>{
                         res.status(200).send(result);
                     }).catch(err=>{
                          res.status(500).send('error write file');
@@ -144,6 +145,14 @@ module.exports = function(sequelize,app){
                 res.status(500).send('no exists any roles with privileges assigned');
             }
         });
+    });
+
+    app.get('/compressResult',function(req,res){
+        pf.compressFile(serverPath).then(data=>{
+            res.status(200).send(data);
+        }).catch(err=>{
+            res.status(500).send('no exists any roles with privileges assigned');
+        })
     });
 }
 

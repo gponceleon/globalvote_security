@@ -4,6 +4,9 @@ var fs = require('fs');
 var util = require('util');
 var sha1 = require('sha1');
 var json2csv = require('json2csv');
+var path = require('path');
+var zipFolder = require('zip-folder');
+
 
 class ProcessFile{
     
@@ -126,6 +129,22 @@ class ProcessFile{
                 reject(err);
             }
         })
+    }
+  
+    compressFile(dirPath){
+        var zipFolder = require('zip-folder');
+        var folderOut='/home/gponceleon/Documentos/GlobalVOte/globalVote-security/globalvote_security/files';
+        return new Promise(function(resolve,reject){
+            zipFolder(dirPath,folderOut+'/queriesOut.zip',function(err){
+                if(err){
+                    console.log('Something happended');
+                    reject(err);
+                }else{
+                    var data ="Folder compressed";
+                    resolve(data);
+                }
+            });
+        });
     }
 }
 
