@@ -2,6 +2,7 @@ var bodyParser = require('body-parser');
 var sha1 = require('sha1');
 var fs = require('fs');
 var path = require('path');
+var sha1 = require('sha1');
 const fileUpload = require('express-fileupload');
 
 function isEmpty(obj){

@@ -101,7 +101,7 @@ class ProcessFile{
         });
     }
 
-      moveFile(file,filePath){
+    moveFile(file,filePath){
         return new Promise(function(resolve,reject){
              file.mv(filePath,function(err){
                 if(err){

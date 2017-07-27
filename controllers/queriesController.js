@@ -154,5 +154,68 @@ module.exports = function(sequelize,app){
             res.status(500).send('no exists any roles with privileges assigned');
         })
     });
+
+    app.get('/federalEntityVotes/:print',function(req,res){
+        sequelize.query('SELECT FE.ENTITY_NAME, SUM(TOTAL_VOTES) VOTES'
+                        +' FROM GLOBALVOTE.FEDERAL_ENTITY FE'
+                        +' JOIN GLOBALVOTE.FEDERAL_DISTRICT FD'
+                        +' ON(FE.FEDERAL_ENTITY_ID=FD.FEDERAL_ENTITY_ID)'
+                        +' JOIN GLOBALVOTE.DISTRICT_MUNICIPALITY DM'
+                        +' ON(DM.FEDERAL_DISTRICT_ID=FD.FEDERAL_DISTRICT_ID)'
+                        +' JOIN GLOBALVOTE.SECTIONS S'
+                        +' ON(S.DISTRICT_MUNICIPALITY_ID=DM.DISTRICT_MUNICIPALITY_ID)'
+                        +' JOIN GLOBALVOTE.ELECTORAL_BOX EB'
+                        +' ON(EB.SECTIONS_ID=S.SECTIONS_ID)'
+                        +' JOIN MINUTES M'
+                        +' ON(M.ELECTORAL_BOX_ID=EB.ELECTORAL_BOX_ID)'
+                        +' JOIN GLOBALVOTE.PARTY_SCRUTINY PS'
+                        +' ON(PS.MINUTES_ID=M.MINUTES_ID)'
+                        +' GROUP BY FE.ENTITY_NAME'
+        ,{type: sequelize.QueryTypes.SELECT}
+        ).then(result=>{
+            if(!isEmpty(result)){
+                if(req.params.print=='si'){
+                    var ps = new ProcessFile();
+                    ps.writeFile(path,"consulta1.txt").then(data=>{
+                        return res.status(200).send(result);
+                    }).catch(err=>{
+                        return res.status(500).send('no exists data from elections');
+                    });             
+                }
+                res.status(200).send(result);
+            }else{
+                res.status(500).send('no exists data from elections');
+            }
+        });
+    });
+
+    app.get('/federalEntityPartyVotes',function(req,res){
+        sequelize.query('SELECT FE.ENTITY_NAME,P.PARTY_NAME, SUM(TOTAL_VOTES) VOTES'
+                        +' FROM GLOBALVOTE.FEDERAL_ENTITY FE'
+                        +' JOIN GLOBALVOTE.FEDERAL_DISTRICT FD'
+                        +' ON(FE.FEDERAL_ENTITY_ID=FD.FEDERAL_ENTITY_ID)'
+                        +' JOIN GLOBALVOTE.DISTRICT_MUNICIPALITY DM'
+                        +' ON(DM.FEDERAL_DISTRICT_ID=FD.FEDERAL_DISTRICT_ID)'
+                        +' JOIN GLOBALVOTE.SECTIONS S'
+                        +' ON(S.DISTRICT_MUNICIPALITY_ID=DM.DISTRICT_MUNICIPALITY_ID)'
+                        +' JOIN GLOBALVOTE.ELECTORAL_BOX EB'
+                        +' ON(EB.SECTIONS_ID=S.SECTIONS_ID)'
+                        +' JOIN MINUTES M'
+                        +' ON(M.ELECTORAL_BOX_ID=EB.ELECTORAL_BOX_ID)'
+                        +' JOIN GLOBALVOTE.PARTY_SCRUTINY PS'
+                        +' ON(PS.MINUTES_ID=M.MINUTES_ID)'
+                        +' JOIN GLOBALVOTE.PARTY P'
+                        +' ON(P.PARTY_ID=PS.PARTY_ID)'
+                        +' GROUP BY FE.ENTITY_NAME,P.PARTY_NAME'
+        ,{type: sequelize.QueryTypes.SELECT}
+        ).then(result=>{
+            if(!isEmpty(result)){
+                res.status(200).send(result);
+            }else{
+                res.status(500).send('no exists data from elections');
+            }
+        });
+    });
+
 }
 
