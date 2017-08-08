@@ -4,7 +4,6 @@ var fs = require('fs');
 const fileUpload = require('express-fileupload');
 var ProcessFile = require('../promises/processFile');
 var multer = require('multer');
-var wait=require('wait.for');
 var serverPath='/home/gponceleon/Documentos/GlobalVOte/globalVote-security/globalvote_security/files/';
 
 var storage =   multer.diskStorage({
@@ -41,6 +40,7 @@ module.exports = function(models,app){
                     var name = filename.split('.');
                     pf.readFilePromise(path,name[0]).then(data=>{
                         if(!isEmpty(data)){
+                            console.log(data);
                             if(name[0]==="users"){
                                 pf.writeUsersInDB(models,data).then(rs=>{
                                     console.log("File proccessed");

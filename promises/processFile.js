@@ -75,7 +75,7 @@ class ProcessFile{
                     active:data[i].data1
                 }).then(function(res){
                     console.log('Role Saved');
-                    resolve(res);
+                    resolve('res');
                 }).catch(function(error){
                     console.log('Role has not been saved');
                     reject(error);
